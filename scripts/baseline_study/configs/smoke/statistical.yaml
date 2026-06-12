@@ -1,0 +1,21 @@
+seed: 42
+run_name: smoke_seasonal_naive
+data:
+  data_dir: data/station
+  stations: [station_A_2, station_A_4]
+task:
+  context_h: 168
+  horizon_h: 24
+runtime:
+  device: cpu
+output:
+  root: output/baseline_study/smoke
+wandb:
+  enabled: true
+  project: telcoagent-baselines
+model:
+  family: statistical
+  name: seasonal_naive_24h
+  kind: seasonal_naive
+  season_h: 24
+

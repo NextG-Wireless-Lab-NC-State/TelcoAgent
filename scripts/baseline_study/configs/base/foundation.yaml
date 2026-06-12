@@ -1,0 +1,37 @@
+seed: 42
+data:
+  data_dir: data/station
+task:
+  context_h: 168
+  horizon_h: 168
+  eval_horizon_h: 168
+  finetune_weeks: 0        # 0 = zero-shot; int>=2 = few-shot N trailing weeks; "full"
+# Fine-tune regime hyperparameters (Chronos-2 only for now). Uses the OFFICIAL
+# Chronos-2 fit() API: epochs -> num_steps (= epochs*ceil(n_train_windows/batch));
+# val_fraction of the pooled windows is held out as validation_inputs, which enables
+# official best-model selection (load_best_model_at_end on eval_loss). Chronos-2 has
+# no patience knob, so there is NO early stopping; fit() returns the best-by-val model.
+# NOTE: chronos counts batch_size in TIME SERIES (our task = 7 KPIs), so a step packs
+# ~batch_size/7 windows; num_steps is the comparable training BUDGET across regimes and
+# "epochs" is nominal (true passes over windows are fewer). Do not call it 100 epochs
+# in the paper; report num_steps. batch_size kept at 32 (validated within 4090 memory).
+finetune:
+  epochs: 100
+  lr: 1.0e-4
+  lr_scheduler: cosine
+  batch_size: 32
+  stride_h: 24          # sliding-window stride; wider = fewer windows = fewer steps/epoch
+  val_fraction: 0.15    # held out for official best-model selection (validation_inputs)
+runtime:
+  device: cuda
+output:
+  root: output/baseline_study_v2/full
+  overwrite: true
+wandb:
+  enabled: false   # chronos env has no real wandb (local wandb/ dir shadows the import); CSV+result.json suffice
+  project: telcoagent-baselines-v2
+model:
+  family: chronos          # overridden per run: chronos | moirai | moment
+  name: chronos2           # overridden per run
+  forecast_mode: zero_shot
+  context_h: 168           # overridden per run (swept, selected on val)

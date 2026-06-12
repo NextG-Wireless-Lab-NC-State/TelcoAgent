@@ -1,0 +1,35 @@
+method: random
+metric:
+  name: val/mean_MAE
+  goal: minimize
+program: scripts/baseline_study/train.py
+command:
+- ${env}
+- python
+- ${program}
+- --config
+- scripts/baseline_study/configs/base/classical.yaml
+- ${args}
+parameters:
+  run_name:
+    value: wandb_classical_tree
+  task.context_h:
+    values: [72, 168]
+  task.horizon_h:
+    value: 168
+  task.eval_horizon_h:
+    value: 168
+  training.stride_h:
+    value: 24
+  model.kind:
+    values: [random_forest, xgboost, lightgbm]
+  model.params.n_estimators:
+    values: [200, 500]
+  model.params.max_depth:
+    values: [5, 10, null]
+  model.params.learning_rate:
+    values: [0.03, 0.1]
+  model.params.random_state:
+    value: 42
+  runtime.device:
+    value: cpu

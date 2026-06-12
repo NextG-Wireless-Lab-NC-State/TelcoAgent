@@ -1,0 +1,36 @@
+method: grid
+metric:
+  name: status/skipped
+  goal: minimize
+program: scripts/baseline_study/train.py
+command:
+- ${env}
+- python
+- ${program}
+- --config
+- scripts/baseline_study/configs/base/external.yaml
+- ${args}
+parameters:
+  run_name:
+    value: wandb_foundation_external_records
+  model.name:
+    values:
+    - chronos2
+    - moirai_small
+    - moirai_base
+    - moirai_large
+    - moirai_moe_small
+    - moirai_moe_base
+    - moment
+    - mamba4cast
+    - toto
+    - timesfm
+    - sundial
+    - time_moe
+  model.kind:
+    values:
+    - external
+  model.forecast_mode:
+    value: environment_gated
+  runtime.device:
+    value: cpu

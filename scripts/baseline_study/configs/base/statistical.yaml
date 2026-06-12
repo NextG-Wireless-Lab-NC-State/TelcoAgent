@@ -1,0 +1,21 @@
+seed: 42
+data:
+  data_dir: data/station
+task:
+  context_h: 168
+  horizon_h: 168
+  eval_horizon_h: 168
+runtime:
+  device: cpu
+output:
+  root: output/baseline_study/full
+wandb:
+  enabled: true
+  project: telcoagent-baselines
+model:
+  family: statistical
+  name: statistical
+  kind: seasonal_naive
+  forecast_mode: univariate_x7
+  season_h: 24
+

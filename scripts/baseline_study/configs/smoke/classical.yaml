@@ -1,0 +1,25 @@
+seed: 42
+run_name: smoke_ridge
+data:
+  data_dir: data/station
+  stations: [station_A_2, station_A_4]
+task:
+  context_h: 48
+  horizon_h: 24
+training:
+  stride_h: 24
+runtime:
+  device: cpu
+output:
+  root: output/baseline_study/smoke
+wandb:
+  enabled: true
+  project: telcoagent-baselines
+model:
+  family: classical
+  name: ridge_smoke
+  kind: ridge
+  forecast_mode: multivariate_direct
+  params:
+    alpha: 1.0
+

@@ -1,0 +1,28 @@
+seed: 42
+data:
+  data_dir: data/station
+task:
+  context_h: 168
+  horizon_h: 168
+  eval_horizon_h: 168
+training:
+  n_epochs: 100
+  patience: 5
+  batch_size: 32
+  stride_h: 24
+  lr: 1.0e-4
+runtime:
+  device: cuda
+output:
+  root: output/baseline_study/full
+wandb:
+  enabled: true
+  project: telcoagent-baselines
+model:
+  family: thuml
+  name: thuml_patchtst
+  kind: patchtst
+  forecast_mode: multivariate_joint
+  hidden_size: 128
+  num_layers: 2
+  dropout: 0.1

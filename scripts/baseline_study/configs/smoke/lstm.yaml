@@ -1,0 +1,31 @@
+seed: 42
+run_name: smoke_lstm
+data:
+  data_dir: data/station
+  stations:
+  - station_A_2
+  - station_A_4
+task:
+  context_h: 48
+  horizon_h: 24
+training:
+  max_epochs: 1
+  batch_size: 4
+  stride_h: 24
+  lr: 0.001
+  early_stopping_patience: 5
+  early_stopping_min_delta: 0.0
+runtime:
+  device: cpu
+output:
+  root: output/baseline_study/smoke
+wandb:
+  enabled: true
+  project: telcoagent-baselines
+model:
+  family: torch
+  name: lstm_smoke
+  kind: lstm
+  hidden_size: 16
+  layers: 1
+  dropout: 0.0

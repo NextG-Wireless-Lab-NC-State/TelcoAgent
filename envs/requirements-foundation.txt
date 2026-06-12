@@ -1,0 +1,29 @@
+# Foundation Model Dependencies for TelcoAgent
+# Install: pip install -r requirements-foundation.txt
+
+# Common
+torch>=2.0.0
+numpy>=1.24.0
+pandas>=2.0.0
+transformers>=4.40.0
+huggingface_hub>=0.20.0
+
+# Chronos-2 (Amazon)
+chronos-forecasting>=1.0.0
+
+# Moirai (Salesforce)
+uni2ts>=1.0.0
+gluonts>=0.14.0
+
+# TimesFM (Google)
+timesfm>=1.0.0
+
+# MOMENT (CMU)
+momentfm>=1.0.0
+
+# Sundial & Time-MoE (uses transformers, already included above)
+# Note: These models require trust_remote_code=True
+
+# Utilities
+python-dotenv>=1.0.0
+tqdm>=4.65.0

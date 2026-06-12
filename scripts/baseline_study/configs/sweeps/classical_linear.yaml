@@ -1,0 +1,33 @@
+method: random
+metric:
+  name: val/mean_MAE
+  goal: minimize
+program: scripts/baseline_study/train.py
+command:
+- ${env}
+- python
+- ${program}
+- --config
+- scripts/baseline_study/configs/base/classical.yaml
+- ${args}
+parameters:
+  run_name:
+    value: wandb_classical_linear
+  task.context_h:
+    values: [24, 72]
+  task.horizon_h:
+    value: 168
+  task.eval_horizon_h:
+    value: 168
+  training.stride_h:
+    value: 24
+  model.kind:
+    values: [ridge, lasso, elasticnet]
+  model.params.alpha:
+    values: [0.01, 0.1, 1.0, 10.0]
+  model.params.l1_ratio:
+    values: [0.3, 0.7]
+  model.params.random_state:
+    value: 42
+  runtime.device:
+    value: cpu
