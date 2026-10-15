@@ -1,0 +1,56 @@
+# Slim conda env for Chronos-2 baseline reproduction.
+#
+# Why a separate env?
+#   chronos-forecasting v2.2.2 (the latest on PyPI as of 2025-12-17) silently
+#   regresses to a flat input-mean prediction for every input — confirmed
+#   reproducibly with synthetic seasonal data. v2.0.0 is the last known-good
+#   version for the multivariate ``amazon/chronos-2`` checkpoint.
+#
+#   We pin v2.0.0 here. Putting it back into the main ``telcoagent`` env
+#   conflicts with the newer ``transformers`` version that uni2ts / momentfm /
+#   the rest of the project rely on, hence this slim sibling env.
+#
+# Setup:
+#   conda env create -f envs/environment-chronos2.yml
+#   conda activate telco-chronos-test
+#
+# Use only for ``scripts/baselines/run_chronos2_context_sweep.py``. All other
+# baseline runners and the TelcoAgent runtime stay in the main ``telcoagent``
+# env.
+
+name: telco-chronos-test
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.10
+
+  # PyTorch (any 2.x with CUDA works for chronos-forecasting v2.0.0).
+  - pytorch>=2.0
+  - pytorch-cuda=12.1
+  - torchvision
+
+  - numpy>=1.26
+  - pandas>=2.2
+  - matplotlib=3.9.2
+  - tqdm
+
+  - pip=24.0
+
+  - pip:
+      # Pinned: chronos-forecasting v2.2.2 is broken (flat predictions);
+      # v2.0.0 is the last known-good for amazon/chronos-2.
+      - chronos-forecasting==2.0.0
+      - python-dotenv>=1.0.0
+      - litellm>=1.0.0
+      # The runner imports a few telcoagent helpers; keep matplotlib +
+      # networkx + the explainer chain available so the foundation_utils
+      # fallback path doesn't trip on optional imports.
+      - networkx>=3.0
+      - markdown
+      - neo4j>=5.0.0
+      - anthropic>=0.20.0
+      - openai>=1.0.0

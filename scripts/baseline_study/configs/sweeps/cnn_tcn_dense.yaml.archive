@@ -1,0 +1,80 @@
+method: bayes
+metric:
+  name: val/mean_MAE
+  goal: minimize
+early_terminate:
+  type: hyperband
+  min_iter: 3
+  eta: 3
+program: scripts/baseline_study/train.py
+command:
+- ${env}
+- python
+- ${program}
+- --config
+- scripts/baseline_study/configs/base/torch_joint.yaml
+- ${args}
+parameters:
+  run_name:
+    value: wandb_cnn_tcn_dense
+  task.context_h:
+    values:
+    - 72
+    - 168
+    - 336
+    - 672
+    - 1344
+    - 1944
+  task.horizon_h:
+    value: 168
+  training.max_epochs:
+    value: 100
+  training.batch_size:
+    values:
+    - 8
+    - 16
+    - 32
+  training.stride_h:
+    values:
+    - 6
+    - 12
+    - 24
+  training.lr:
+    distribution: log_uniform_values
+    min: 5.0e-05
+    max: 0.005
+  model.kind:
+    values:
+    - tcn
+    - modern_tcn
+  model.forecast_mode:
+    values:
+    - multivariate_joint
+    - univariate_x7
+  model.hidden_size:
+    values:
+    - 32
+    - 64
+    - 128
+    - 256
+    - 512
+  model.layers:
+    values:
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 8
+  model.dropout:
+    values:
+    - 0.0
+    - 0.1
+    - 0.2
+    - 0.3
+  runtime.device:
+    value: cuda
+  training.early_stopping_patience:
+    value: 5
+  training.early_stopping_min_delta:
+    value: 0.0

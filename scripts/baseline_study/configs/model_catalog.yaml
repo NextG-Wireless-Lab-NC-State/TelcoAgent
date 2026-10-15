@@ -1,0 +1,85 @@
+study: telcoagent_115_station_7kpi_dense_baselines
+task:
+  n_stations: 115
+  n_kpis: 7
+  horizon_h: 168
+  split: 67d_train_14d_val_7d_test
+forecast_modes:
+  univariate_x7: "Train or fit one model per KPI, then stack seven forecasts."
+  multivariate_joint: "One model consumes and emits all 7 KPI channels jointly."
+  multivariate_direct: "Tabular/direct model uses all KPI lag features and predicts all KPI targets."
+families:
+  statistical:
+    forecast_mode: univariate_x7
+    models:
+      - last_value
+      - mean
+      - rolling_mean_6h
+      - rolling_mean_12h
+      - rolling_mean_24h
+      - rolling_mean_72h
+      - seasonal_naive_24h
+      - seasonal_naive_168h
+      - ets_additive
+      - ets_multiplicative
+      - arima_100
+      - arima_110
+      - sarima_100_24h
+  classical:
+    forecast_mode: multivariate_direct
+    models:
+      - ridge
+      - lasso
+      - elasticnet
+      - random_forest
+      - extra_trees
+      - xgboost
+      - lightgbm
+  recurrent:
+    forecast_modes: [multivariate_joint, univariate_x7]
+    models:
+      - lstm
+      - gru
+      - bidirectional_lstm
+      - bidirectional_gru
+  cnn_tcn:
+    forecast_modes: [multivariate_joint, univariate_x7]
+    models:
+      - tcn
+      - modern_tcn
+  linear_mlp:
+    forecast_modes: [multivariate_joint, univariate_x7]
+    models:
+      - dlinear
+      - nlinear
+      - nbeats
+      - nhits
+  transformer_modern:
+    forecast_modes: [multivariate_joint, univariate_x7]
+    models:
+      - transformer
+      - patchtst
+      - itransformer
+      - timexer
+      - tsmixer
+      - patchtsmixer
+      - timemixer
+      - timesnet
+      - tft
+      - deepar
+  foundation_external:
+    forecast_mode: environment_gated
+    models:
+      - chronos2
+      - moirai_small
+      - moirai_base
+      - moirai_large
+      - moirai_moe_small
+      - moirai_moe_base
+      - moment
+      - mamba4cast
+      - toto
+      - timesfm
+      - sundial
+      - time_moe
+

@@ -1,0 +1,21 @@
+seed: 42
+run_name: smoke_chronos2_external_record
+data:
+  data_dir: data/station
+  stations: [station_A_2]
+task:
+  context_h: 168
+  horizon_h: 24
+runtime:
+  device: cpu
+output:
+  root: output/baseline_study/smoke
+wandb:
+  enabled: true
+  project: telcoagent-baselines
+model:
+  family: external
+  name: chronos2
+  kind: chronos2
+  skip_reason: "Use archived scripts/baselines/run_chronos2_context_sweep.py until native adapter is installed."
+

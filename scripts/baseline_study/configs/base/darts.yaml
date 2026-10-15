@@ -1,0 +1,28 @@
+seed: 42
+data:
+  data_dir: data/station
+task:
+  context_h: 168
+  horizon_h: 168
+  eval_horizon_h: 168
+training:
+  n_epochs: 10
+  patience: 5
+  batch_size: 32
+  stride_h: 24
+  lr: 0.001
+runtime:
+  device: cuda
+output:
+  root: output/baseline_study/full
+wandb:
+  enabled: true
+  project: telcoagent-baselines
+model:
+  family: darts
+  name: darts_lstm
+  kind: lstm
+  forecast_mode: univariate_x7
+  hidden_size: 128
+  num_layers: 2
+  dropout: 0.1

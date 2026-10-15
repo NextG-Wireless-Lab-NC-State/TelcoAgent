@@ -1,0 +1,34 @@
+seed: 42
+run_name: smoke_lstm_univariate_x7
+data:
+  data_dir: data/station
+  stations:
+  - station_A_2
+  - station_A_4
+task:
+  context_h: 48
+  horizon_h: 24
+training:
+  n_epochs: 1
+  patience: 1
+  batch_size: 4
+  stride_h: 24
+  lr: 0.001
+  early_stopping_patience: 5
+  early_stopping_min_delta: 0.0
+runtime:
+  device: cpu
+output:
+  root: output/baseline_study/smoke
+wandb:
+  enabled: true
+  project: telcoagent-baselines
+model:
+  family: torch
+  name: lstm_univariate_smoke
+  kind: lstm
+  forecast_mode: univariate_x7
+  hidden_size: 16
+  layers: 1
+  dropout: 0.0
+  bidirectional: false

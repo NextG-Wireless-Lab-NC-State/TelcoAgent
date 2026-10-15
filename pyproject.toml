@@ -1,0 +1,192 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "telcoagent"
+version = "0.1.0"
+description = "Training-Free Foundation Model for O-RAN Traffic Prediction"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "TelcoAgent Lab", email = "your.email@example.com"}
+]
+keywords = ["wireless", "forecasting", "llm", "o-ran", "training-free"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+]
+
+[project.urls]
+Homepage = "https://github.com/CorbinKim/telcoagent"
+Repository = "https://github.com/CorbinKim/telcoagent"
+Issues = "https://github.com/CorbinKim/telcoagent/issues"
+
+[tool.setuptools.packages.find]
+include = ["telcoagent*"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+    "mypy>=1.0.0",
+]
+satellite = [
+    "sentinelhub>=3.9.0",
+    "earthengine-api>=0.1.360",
+]
+docs = [
+    "sphinx>=6.0.0",
+    "sphinx-rtd-theme>=1.2.0",
+]
+
+[tool.black]
+line-length = 100
+# Pin to py310 only. Black 26 will otherwise emit syntax that the older
+# py3.8/3.9/3.10 parsers in CI cannot validate, even when the target list
+# nominally covers them. The conda env is Python 3.10.20.
+target-version = ['py310']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 100
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = false      # too noisy on numpy / external libs without stubs
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+disallow_untyped_decorators = false
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+follow_imports = "normal"
+ignore_missing_imports = true
+
+# KG construction pipeline (paper contribution #2). Legacy-style module;
+# strict mypy is relaxed here. See telcoagent/kg_construction/CLAUDE.md.
+[[tool.mypy.overrides]]
+module = "telcoagent.kg_construction.*"
+ignore_errors = true
+
+# External libs without first-party type stubs.
+[[tool.mypy.overrides]]
+module = [
+    "chronos.*",
+    "ragas.*",
+    "litellm.*",
+    "neo4j.*",
+    "langchain.*",
+    "langchain_openai.*",
+    "openai.*",
+    "anthropic.*",
+    "sentence_transformers.*",
+    "tqdm.*",
+]
+ignore_missing_imports = true
+
+# Pragmatic strict-mode noise suppression. These modules carry real
+# code patterns that mypy cannot type-narrow cleanly: lazy-initialised
+# attributes, numpy shape inference, owlready2 OWL property unions,
+# dynamic-key dicts. Real bugs were fixed separately. Strict adoption
+# is tracked as a follow-up task in tasks/.
+[[tool.mypy.overrides]]
+module = [
+    "telcoagent.ontology.core",
+    "telcoagent.stores.connection",
+    "telcoagent.stores.ontology_store",
+    "telcoagent.prediction.predictor",
+    "telcoagent.evaluation.ragas_eval",
+    "telcoagent.explainer.audit",
+    "telcoagent.explainer.orchestrator",
+]
+disable_error_code = [
+    "no-redef",
+    "assignment",
+    "arg-type",
+    "return-value",
+    "call-arg",
+    "index",
+    "dict-item",
+    "unused-ignore",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-v --cov=telcoagent --cov-report=term-missing"
+filterwarnings = [
+    "ignore:You passed `quantization_config`.*:UserWarning",
+]
+markers = [
+    "integration: marks tests as integration tests (deselect with '-m \"not integration\"')",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = [
+    "data",
+    "output",
+    "paper",
+    ".omc",
+]
+
+[tool.ruff.lint]
+# Conservative starter ruleset. Expand to UP, B, SIM, RUF after baseline is clean.
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+]
+ignore = [
+    "E501",  # line length — handled by black
+    "E731",  # lambda assignments are fine for short callbacks
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*"            = ["F401", "F841"]    # unused imports / vars in test scaffolding
+"scripts/*"          = ["E402"]            # PYTHONPATH manipulation before imports
+"**/__init__.py"     = ["F401"]            # public re-exports are intentional
+"telcoagent/kg_construction/**" = ["E402"]  # legacy import style being cleaned up (see CLAUDE.md)
+# Lazy imports that intentionally appear below module-level code (logger /
+# dataclass / re-pattern). Each carries documentation in the file itself.
+"telcoagent/context/mcp_tools.py" = ["E402"]
+
+"telcoagent/explainer/audit.py"   = ["E402"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["telcoagent"]
+
+

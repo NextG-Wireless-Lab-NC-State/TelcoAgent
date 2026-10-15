@@ -1,0 +1,29 @@
+method: grid
+metric:
+  name: val/mean_MAE
+  goal: minimize
+program: scripts/baseline_study/train.py
+command:
+- ${env}
+- python
+- ${program}
+- --config
+- scripts/baseline_study/configs/base/statistical.yaml
+- ${args}
+parameters:
+  run_name:
+    value: wandb_statistical_grid
+  task.horizon_h:
+    value: 168
+  task.eval_horizon_h:
+    value: 168
+  model.kind:
+    values: [naive, historic_average, window_average, seasonal_naive]
+  model.name:
+    value: stat_baseline
+  model.window_h:
+    values: [24, 168]
+  model.season_h:
+    values: [168]
+  runtime.device:
+    value: cpu

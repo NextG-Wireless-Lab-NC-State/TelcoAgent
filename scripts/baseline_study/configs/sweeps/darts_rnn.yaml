@@ -1,0 +1,45 @@
+method: bayes
+metric:
+  name: val/mean_MAE
+  goal: minimize
+early_terminate:
+  type: hyperband
+  min_iter: 3
+  eta: 3
+program: scripts/baseline_study/train.py
+command:
+- ${env}
+- python
+- ${program}
+- --config
+- scripts/baseline_study/configs/base/darts.yaml
+- ${args}
+parameters:
+  run_name:
+    value: wandb_darts_rnn
+  task.context_h:
+    values: [168, 336, 504, 672]
+  task.horizon_h:
+    value: 168
+  task.eval_horizon_h:
+    value: 168
+  training.stride_h:
+    value: 24
+  training.batch_size:
+    value: 32
+  training.lr:
+    value: 1.0e-3
+  training.n_epochs:
+    value: 10
+  training.patience:
+    value: 5
+  model.kind:
+    values: [lstm, gru, tcn, block_lstm, block_gru]
+  model.hidden_size:
+    value: 256
+  model.num_layers:
+    values: [1, 2, 3, 4]
+  model.dropout:
+    value: 0.1
+  runtime.device:
+    value: cuda

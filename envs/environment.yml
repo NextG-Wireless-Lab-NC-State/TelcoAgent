@@ -1,0 +1,85 @@
+name: telcoagent
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+
+dependencies:
+  # Python (3.10 required for TimesFM/lingvo compatibility)
+  - python=3.10
+
+  # PyTorch with CUDA
+  - pytorch>=2.0
+  - pytorch-cuda=12.1
+  - torchvision
+
+  # Scientific Computing
+  - numpy>=1.26
+  - scipy>=1.13
+  - pandas>=2.2
+
+  # Visualization
+  - matplotlib=3.9.2
+
+  # Graph
+  - networkx>=3.0
+
+  # Utilities
+  - pyyaml=6.0.2
+  - tqdm=4.66.5
+  - joblib=1.4.2
+  - pip=24.0
+
+  # Pip packages
+  - pip:
+      # ===== Core ML =====
+      - transformers>=4.40.0
+      - huggingface_hub>=0.23.0
+      - accelerate>=0.20.0
+      - safetensors>=0.4.0
+      - einops>=0.7.0
+
+      # ===== LLM API =====
+      - litellm>=1.0.0
+      - python-dotenv>=1.0.0
+      - openai>=1.0.0
+      - anthropic>=0.20.0
+
+      # PDF parsing (TelcoAgent-RAG)
+      - pdfplumber>=0.10.0
+
+      # Neo4j (optional — for load_neo4j.py)
+      - neo4j>=5.0.0
+
+      # Dev / Testing
+      - pytest>=7.0.0
+      - pytest-cov>=4.0.0
+
+# =============================================================================
+# Foundation Models - Install SEPARATELY due to dependency conflicts
+# =============================================================================
+# After creating this environment, install models one at a time:
+#
+# 1. Chronos-2 (Amazon):
+#    pip install chronos-forecasting
+#
+# 2. Moirai (Salesforce):
+#    pip install uni2ts gluonts
+#
+# 3. MOMENT (CMU) - may conflict with uni2ts:
+#    pip install momentfm --no-deps
+#    pip install einops jaxtyping beartype
+#
+# 4. TimesFM (Google) - requires Python 3.10, complex deps:
+#    pip install timesfm --no-deps
+#
+# 5. Sundial & Time-MoE - use transformers directly:
+#    # No extra install needed, uses trust_remote_code=True
+#
+# 6. Mamba4Cast (AutoML):
+#    # Repo cloned at <repo_root>/Mamba4Cast (sys.path-injected by the runner)
+#    pip install mamba-ssm==2.2.2 causal-conv1d==1.4.0
+#    # Download weights to models/mamba4cast_2l_1024_conv_i5e5.pth — see
+#    # scripts/baselines/run_mamba4cast.py docstring for the Dropbox link.
+# =============================================================================
